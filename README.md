@@ -1,70 +1,49 @@
-# Getting Started with Create React App
+# act-warning-fireevent-mcve
+This is _yet another_ quick MCVE (Minimal, Complete, Verifiable example) to demonstrate what I think could be a bug/unexpected behavior in either React 18 or RTL 13.4.  OTOH, it could just be that I'm doing it wrong<sup>TM</sup>. :-)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Background
 
-## Available Scripts
+When we upgraded to React 18 and RTL 13.4, a number of existing tests started to generate `act` warnings on `fireEvent` calls; the general flow is:
 
-In the project directory, you can run:
+1. render a view, 
+1. click a button (fireEvent), 
+1. assert that a fetch function is called
 
-### `npm start`
+The `act` warning is only supressed if we wrap the `fireEvent` call with `act` and `await` it (?). 
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+I plan to open an issue (question) with the RTL maintainers so I understand why we see this behavior.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## How to use this repo
+After `npm i`, use `npm t` to run the tests in watch mode, and see the `act` warning`.  It will look something like
 
-### `npm test`
+```console
+  console.error
+    Warning: An update to App inside a test was not wrapped in act(...).
+    
+    When testing, code that causes React state updates should be wrapped into act(...):
+    
+    act(() => {
+      /* fire events that update state */
+    });
+    /* assert on the output */
+    
+    This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+        at App (/Users/WCANEIRA/code/act-warning-fireevent-mcve/src/App.js:4:39)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+      14 |         if (res.status === 200) {
+      15 |           const data = await res.json()
+    > 16 |           setFetchState({ todo: data.title, fetching: false })
+         |           ^
+      17 |         }
+      18 |         else {
+      19 |           //console.log('bad HTTP status', res.status)
+```
 
-### `npm run build`
+There are two tests you can try, one that generates the warning, and one that does NOT.  The only difference is the use of `await act` on test that has no warnings.  Feel free to isolate (`only`) the tests individually to see the warning vs NOT see the warning.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+If you prefer, you can use `npm run test:nowatch`.  
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Using `npm start` will open the test application in a browser to see it visually, if desired.  
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Warning
+The API endpoint this uses will occasionally have CORS errors, when testing in a browser.  I wonder if the API owner is load balancing servers and one of them doesn't allow CORS.  Simply keep trying if you get such an error.
