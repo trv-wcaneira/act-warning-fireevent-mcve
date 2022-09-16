@@ -28,7 +28,6 @@ After `npm i`, use `npm t` to run the tests in watch mode, and see the `act` war
     /* assert on the output */
     
     This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
-        at App (/Users/WCANEIRA/code/act-warning-fireevent-mcve/src/App.js:4:39)
 
       14 |         if (res.status === 200) {
       15 |           const data = await res.json()

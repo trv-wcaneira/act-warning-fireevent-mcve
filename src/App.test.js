@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
 import App from './App';
 
 beforeEach(() => {
@@ -12,19 +12,23 @@ afterEach(() => {
   jest.restoreAllMocks();
 });
   
-test('generates an act warning when firing an event', () => {
+test('generates an act warning when firing an event, even if we wait for the result', async () => {
   render(<App />);
   
   fireEvent.click(screen.getByText('Click Me'))
  
-  expect(global.fetch).toHaveBeenCalled()
+  await waitFor(() => {
+    expect(global.fetch).toHaveBeenCalled()
+  })
 });
 
-test('does NOT generate an act warning when firing an event', async () => {
+test.only('does NOT generate an act warning when firing an event, if we wait for act??', async () => {
   render(<App />);
   
-  //awaiting and invoking act supresses the warning?!
+  //awaiting and invoking act supresses the warning??
   await act(() => fireEvent.click(screen.getByText('Click Me')))
  
-  expect(global.fetch).toHaveBeenCalled()
+  await waitFor(() => {
+    expect(global.fetch).toHaveBeenCalled()
+  })
 });
