@@ -12,7 +12,7 @@ afterEach(() => {
   jest.restoreAllMocks();
 });
   
-test('generates an act warning when firing an event, even if we wait for the result', async () => {
+test.skip('generates an act warning when firing an event, if we dont wait for the effect to finish', async () => {
   render(<App />);
   
   fireEvent.click(screen.getByText('Click Me'))
@@ -22,13 +22,18 @@ test('generates an act warning when firing an event, even if we wait for the res
   })
 });
 
-test.only('does NOT generate an act warning when firing an event, if we wait for act??', async () => {
+test('does NOT generate an act warning when we properly test the effect when it is FINISHED', async () => {
   render(<App />);
   
-  //awaiting and invoking act supresses the warning??
-  await act(() => fireEvent.click(screen.getByText('Click Me')))
+  fireEvent.click(screen.getByText('Click Me'))
  
+  //if you want to assert fetch was called
   await waitFor(() => {
     expect(global.fetch).toHaveBeenCalled()
+  })
+
+  //but ultimately we must wait for the effect to finish by asserting on the rendered output
+  await waitFor(() => {    
+    expect(screen.getByText('testing123')).toBeInTheDocument()
   })
 });
