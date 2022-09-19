@@ -14,7 +14,7 @@ The issue is that asserting the fetch is not enough, one [must wait for the effe
 ## How to use this repo
 After `npm i`, use `npm t` to run the tests in watch mode.
 
-There are two tests you can try, one that generates the warning, and one that does NOT.  You can see that in the proper test, the effect is allowed to finish completely.
+There are two tests you can try, one that generates the warning, and one that does NOT.  
 
 ```console
   console.error
@@ -27,6 +27,8 @@ There are two tests you can try, one that generates the warning, and one that do
     });
     /* assert on the output */
 ```
+
+You can see that in the proper test, the effect is allowed to finish completely, and there is no warning.
 
 If you prefer, you can use `npm run test:nowatch`.  
 
